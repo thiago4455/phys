@@ -40,10 +40,23 @@ class Matrix:
     def __len__(self):
         return len(self.rows)
 
+    def cofactor(self, Ci, Cj):
+        return Matrix([[Mij for i,Mij in enumerate(Mj) if i!=Ci-1] for j,Mj in enumerate(self.rows) if j!=Cj-1])
+
 
     @property
     def determinant(self):
-        return NotImplementedError
+        if self.m == self.n:
+            if self.m == 2:
+                return self[0,0]*self[1,1] - self[0,1]*self[1,0]
+            elif self.m == 1:
+                return self
+            else:
+                return sum([Mij*self.cofactor(i + 1, 1).d for i,Mij in enumerate(self.rows[0])])
+
+        else:
+            print("Matrix must be square.")
+            raise ValueError
 
     @property
     def d(self):
@@ -116,7 +129,7 @@ class Matrix:
 
     def __invert__(self):
         inverted = [[] for _ in range(len(self.rows[0]))]
-        for j,Aj in enumerate(self.rows):
+        for Aj in self.rows:
             for i,Ai in enumerate(Aj):
                 inverted[i].append(Ai)
         return Matrix(inverted)
